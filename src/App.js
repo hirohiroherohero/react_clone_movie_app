@@ -1,45 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import Button from './Button'
-import styles from './style.module.css'
+/* eslint-disable array-callback-return */
+import React, { useState } from 'react';
 
 function App() {
-  const [couter, setValue] = useState(0)
-  const [keyworld, setKeyworld] = useState('')
+  const [toDo, setToDo] = useState('')
+  const [toDos, setToDos] = useState([]);
 
-  const increase = () => {
-    setValue(prev => prev + 1)
+  const onChange = (e) => {
+    setToDo(e.target.value);
   }
 
-  const handleTextInput = (e) => {
-    setKeyworld(e.target.value)
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (toDo.length === 0) {
+      return;
+    }
+
+    // 리액트에서는 스테이트를 직접 변경하면 안됨!
+    // 빈 array에 push하는 방법!
+    setToDos(prev => [toDo, ...prev]);
+
+    setToDo('');
   }
-
-
-  useEffect(() => {
-    console.log('한번만 실행')
-  }, [])
-
-  useEffect(() => {
-    console.log('키워드 작성시에만 실행')
-  }, [keyworld])
-
-  useEffect(() => {
-    console.log('카운터에만 실행')
-  }, [couter])
-
-  useEffect(() => {
-    console.log('카운터와 키워드 작성시에 실행')
-  }, [keyworld, couter])
 
   return (
-    <>
-      <h1 className={styles.title}>{couter}</h1>
-      <Button text="click me!" clickEvent={increase}/>
+    <div>
+      <h1>해야할것 {toDos.length}</h1>
+      <form onSubmit={onSubmit}>
+        <input type="text" placeholder="To Do" value={toDo} onChange={onChange} />
+        <button type="submit">Add</button>
+      </form>
+      <ul>
+        {toDos.map((item, index) =>
+          <li key={index}>{item}</li>
+        )}
 
-      <div>
-        <input type="text" value={keyworld} onChange={handleTextInput}/>
-      </div>
-    </>
+      </ul>
+    </div>
   );
 }
 
